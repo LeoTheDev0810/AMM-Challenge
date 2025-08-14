@@ -1,4 +1,5 @@
-pragma solidity >=0.4.0;
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.5;
 
 // computes square roots using the babylonian method
 // https://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Babylonian_method

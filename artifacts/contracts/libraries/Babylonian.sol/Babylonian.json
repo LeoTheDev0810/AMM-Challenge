@@ -1,0 +1,10 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "Babylonian",
+  "sourceName": "contracts/libraries/Babylonian.sol",
+  "abi": [],
+  "bytecode": "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea2646970667358221220cadf2c5583e81f207aba28ca47222ff0bccbbae6239621f35afcef4618ea5e0464736f6c63430008160033",
+  "deployedBytecode": "0x600080fdfea2646970667358221220cadf2c5583e81f207aba28ca47222ff0bccbbae6239621f35afcef4618ea5e0464736f6c63430008160033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

@@ -1,0 +1,10 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "AMMLibrary",
+  "sourceName": "contracts/libraries/AMMLibrary.sol",
+  "abi": [],
+  "bytecode": "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea26469706673582212207ffa5c62601c1a5beee9e2c4b4812374ef92507920a99f9fb6cdae1203fb5be964736f6c63430008160033",
+  "deployedBytecode": "0x600080fdfea26469706673582212207ffa5c62601c1a5beee9e2c4b4812374ef92507920a99f9fb6cdae1203fb5be964736f6c63430008160033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
