@@ -26,18 +26,49 @@ import type {
 export interface IAMMFactoryInterface extends Interface {
   getFunction(
     nameOrSignature:
+      | "ADMIN_ROLE"
+      | "FEE_MANAGER_ROLE"
+      | "PAIR_CREATOR_ROLE"
+      | "PAUSER_ROLE"
       | "allPairs"
       | "allPairsLength"
+      | "canCreatePair"
+      | "canManageFees"
+      | "canPause"
       | "createPair"
+      | "emergencyStop"
       | "feeTo"
       | "feeToSetter"
       | "getPair"
+      | "grantRoleBatch"
+      | "revokeRoleBatch"
       | "setFeeTo"
       | "setFeeToSetter"
   ): FunctionFragment;
 
-  getEvent(nameOrSignatureOrTopic: "PairCreated"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic:
+      | "FeeToSetterUpdated"
+      | "FeeToUpdated"
+      | "PairCreated"
+  ): EventFragment;
 
+  encodeFunctionData(
+    functionFragment: "ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "FEE_MANAGER_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "PAIR_CREATOR_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "PAUSER_ROLE",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "allPairs",
     values: [BigNumberish]
@@ -47,8 +78,24 @@ export interface IAMMFactoryInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "canCreatePair",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "canManageFees",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "canPause",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "createPair",
     values: [AddressLike, AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "emergencyStop",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "feeTo", values?: undefined): string;
   encodeFunctionData(
@@ -60,6 +107,14 @@ export interface IAMMFactoryInterface extends Interface {
     values: [AddressLike, AddressLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "grantRoleBatch",
+    values: [BytesLike, AddressLike[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeRoleBatch",
+    values: [BytesLike, AddressLike[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setFeeTo",
     values: [AddressLike]
   ): string;
@@ -68,23 +123,86 @@ export interface IAMMFactoryInterface extends Interface {
     values: [AddressLike]
   ): string;
 
+  decodeFunctionResult(functionFragment: "ADMIN_ROLE", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "FEE_MANAGER_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "PAIR_CREATOR_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "PAUSER_ROLE",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "allPairs", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "allPairsLength",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "canCreatePair",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "canManageFees",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "canPause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "createPair", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "emergencyStop",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "feeTo", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "feeToSetter",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getPair", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "grantRoleBatch",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "revokeRoleBatch",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "setFeeTo", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setFeeToSetter",
     data: BytesLike
   ): Result;
+}
+
+export namespace FeeToSetterUpdatedEvent {
+  export type InputTuple = [
+    oldFeeToSetter: AddressLike,
+    newFeeToSetter: AddressLike
+  ];
+  export type OutputTuple = [oldFeeToSetter: string, newFeeToSetter: string];
+  export interface OutputObject {
+    oldFeeToSetter: string;
+    newFeeToSetter: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace FeeToUpdatedEvent {
+  export type InputTuple = [oldFeeTo: AddressLike, newFeeTo: AddressLike];
+  export type OutputTuple = [oldFeeTo: string, newFeeTo: string];
+  export interface OutputObject {
+    oldFeeTo: string;
+    newFeeTo: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
 
 export namespace PairCreatedEvent {
@@ -155,15 +273,31 @@ export interface IAMMFactory extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
+  ADMIN_ROLE: TypedContractMethod<[], [string], "view">;
+
+  FEE_MANAGER_ROLE: TypedContractMethod<[], [string], "view">;
+
+  PAIR_CREATOR_ROLE: TypedContractMethod<[], [string], "view">;
+
+  PAUSER_ROLE: TypedContractMethod<[], [string], "view">;
+
   allPairs: TypedContractMethod<[arg0: BigNumberish], [string], "view">;
 
   allPairsLength: TypedContractMethod<[], [bigint], "view">;
+
+  canCreatePair: TypedContractMethod<[account: AddressLike], [boolean], "view">;
+
+  canManageFees: TypedContractMethod<[account: AddressLike], [boolean], "view">;
+
+  canPause: TypedContractMethod<[account: AddressLike], [boolean], "view">;
 
   createPair: TypedContractMethod<
     [tokenA: AddressLike, tokenB: AddressLike],
     [string],
     "nonpayable"
   >;
+
+  emergencyStop: TypedContractMethod<[], [void], "nonpayable">;
 
   feeTo: TypedContractMethod<[], [string], "view">;
 
@@ -173,6 +307,18 @@ export interface IAMMFactory extends BaseContract {
     [tokenA: AddressLike, tokenB: AddressLike],
     [string],
     "view"
+  >;
+
+  grantRoleBatch: TypedContractMethod<
+    [role: BytesLike, accounts: AddressLike[]],
+    [void],
+    "nonpayable"
+  >;
+
+  revokeRoleBatch: TypedContractMethod<
+    [role: BytesLike, accounts: AddressLike[]],
+    [void],
+    "nonpayable"
   >;
 
   setFeeTo: TypedContractMethod<[arg0: AddressLike], [void], "nonpayable">;
@@ -188,11 +334,32 @@ export interface IAMMFactory extends BaseContract {
   ): T;
 
   getFunction(
+    nameOrSignature: "ADMIN_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "FEE_MANAGER_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "PAIR_CREATOR_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "PAUSER_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
     nameOrSignature: "allPairs"
   ): TypedContractMethod<[arg0: BigNumberish], [string], "view">;
   getFunction(
     nameOrSignature: "allPairsLength"
   ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "canCreatePair"
+  ): TypedContractMethod<[account: AddressLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "canManageFees"
+  ): TypedContractMethod<[account: AddressLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "canPause"
+  ): TypedContractMethod<[account: AddressLike], [boolean], "view">;
   getFunction(
     nameOrSignature: "createPair"
   ): TypedContractMethod<
@@ -200,6 +367,9 @@ export interface IAMMFactory extends BaseContract {
     [string],
     "nonpayable"
   >;
+  getFunction(
+    nameOrSignature: "emergencyStop"
+  ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "feeTo"
   ): TypedContractMethod<[], [string], "view">;
@@ -214,12 +384,40 @@ export interface IAMMFactory extends BaseContract {
     "view"
   >;
   getFunction(
+    nameOrSignature: "grantRoleBatch"
+  ): TypedContractMethod<
+    [role: BytesLike, accounts: AddressLike[]],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "revokeRoleBatch"
+  ): TypedContractMethod<
+    [role: BytesLike, accounts: AddressLike[]],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
     nameOrSignature: "setFeeTo"
   ): TypedContractMethod<[arg0: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "setFeeToSetter"
   ): TypedContractMethod<[arg0: AddressLike], [void], "nonpayable">;
 
+  getEvent(
+    key: "FeeToSetterUpdated"
+  ): TypedContractEvent<
+    FeeToSetterUpdatedEvent.InputTuple,
+    FeeToSetterUpdatedEvent.OutputTuple,
+    FeeToSetterUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "FeeToUpdated"
+  ): TypedContractEvent<
+    FeeToUpdatedEvent.InputTuple,
+    FeeToUpdatedEvent.OutputTuple,
+    FeeToUpdatedEvent.OutputObject
+  >;
   getEvent(
     key: "PairCreated"
   ): TypedContractEvent<
@@ -229,6 +427,28 @@ export interface IAMMFactory extends BaseContract {
   >;
 
   filters: {
+    "FeeToSetterUpdated(address,address)": TypedContractEvent<
+      FeeToSetterUpdatedEvent.InputTuple,
+      FeeToSetterUpdatedEvent.OutputTuple,
+      FeeToSetterUpdatedEvent.OutputObject
+    >;
+    FeeToSetterUpdated: TypedContractEvent<
+      FeeToSetterUpdatedEvent.InputTuple,
+      FeeToSetterUpdatedEvent.OutputTuple,
+      FeeToSetterUpdatedEvent.OutputObject
+    >;
+
+    "FeeToUpdated(address,address)": TypedContractEvent<
+      FeeToUpdatedEvent.InputTuple,
+      FeeToUpdatedEvent.OutputTuple,
+      FeeToUpdatedEvent.OutputObject
+    >;
+    FeeToUpdated: TypedContractEvent<
+      FeeToUpdatedEvent.InputTuple,
+      FeeToUpdatedEvent.OutputTuple,
+      FeeToUpdatedEvent.OutputObject
+    >;
+
     "PairCreated(address,address,address,uint256)": TypedContractEvent<
       PairCreatedEvent.InputTuple,
       PairCreatedEvent.OutputTuple,

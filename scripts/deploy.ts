@@ -1,5 +1,5 @@
 import { ethers, upgrades } from 'hardhat'
-import { AMMFactory, AMMRouter01, WETH9 } from './typechain-types'
+import { AMMFactory, AMMRouter01, WETH9 } from '../typechain-types'
 
 async function main() {
 	console.log('开始部署 AMM 合约...')
@@ -7,7 +7,11 @@ async function main() {
 	// 获取部署账户
 	const [deployer] = await ethers.getSigners()
 	console.log('部署账户:', deployer.address)
-	console.log('账户余额:', ethers.formatEther(await deployer.provider.getBalance(deployer.address)), 'ETH')
+	console.log(
+		'账户余额:',
+		ethers.formatEther(await deployer.provider.getBalance(deployer.address)),
+		'ETH',
+	)
 
 	// 1. 部署 WETH9 合约
 	console.log('\n1. 部署 WETH9 合约...')
@@ -25,13 +29,16 @@ async function main() {
 		[deployer.address], // feeToSetter 参数
 		{
 			initializer: 'initialize',
-			kind: 'uups'
-		}
+			kind: 'uups',
+		},
 	)) as unknown as AMMFactory
 	await factory.waitForDeployment()
 	const factoryAddress = await factory.getAddress()
 	console.log('AMMFactory 代理合约地址:', factoryAddress)
-	console.log('AMMFactory 实现合约地址:', await upgrades.erc1967.getImplementationAddress(factoryAddress))
+	console.log(
+		'AMMFactory 实现合约地址:',
+		await upgrades.erc1967.getImplementationAddress(factoryAddress),
+	)
 
 	// 3. 部署 AMMRouter01 可升级合约
 	console.log('\n3. 部署 AMMRouter01 可升级合约...')
@@ -41,13 +48,16 @@ async function main() {
 		[factoryAddress, wethAddress], // factory 和 WETH 地址参数
 		{
 			initializer: 'initialize',
-			kind: 'uups'
-		}
+			kind: 'uups',
+		},
 	)) as unknown as AMMRouter01
 	await router.waitForDeployment()
 	const routerAddress = await router.getAddress()
 	console.log('AMMRouter01 代理合约地址:', routerAddress)
-	console.log('AMMRouter01 实现合约地址:', await upgrades.erc1967.getImplementationAddress(routerAddress))
+	console.log(
+		'AMMRouter01 实现合约地址:',
+		await upgrades.erc1967.getImplementationAddress(routerAddress),
+	)
 
 	// 4. 验证部署
 	console.log('\n4. 验证部署结果...')
@@ -96,24 +106,30 @@ async function main() {
 		contracts: {
 			WETH9: {
 				address: wethAddress,
-				type: 'regular'
+				type: 'regular',
 			},
 			AMMFactory: {
 				proxy: factoryAddress,
-				implementation: await upgrades.erc1967.getImplementationAddress(factoryAddress),
-				type: 'upgradeable'
+				implementation: await upgrades.erc1967.getImplementationAddress(
+					factoryAddress,
+				),
+				type: 'upgradeable',
 			},
 			AMMRouter01: {
 				proxy: routerAddress,
-				implementation: await upgrades.erc1967.getImplementationAddress(routerAddress),
-				type: 'upgradeable'
-			}
-		}
+				implementation: await upgrades.erc1967.getImplementationAddress(
+					routerAddress,
+				),
+				type: 'upgradeable',
+			},
+		},
 	}
 
 	// 写入部署信息文件
 	const fs = require('fs')
-	const deploymentFileName = `deployment-${(await ethers.provider.getNetwork()).chainId}-${Date.now()}.json`
+	const deploymentFileName = `deployment-${
+		(await ethers.provider.getNetwork()).chainId
+	}-${Date.now()}.json`
 	fs.writeFileSync(deploymentFileName, JSON.stringify(deploymentInfo, null, 2))
 	console.log(`\n部署信息已保存到: ${deploymentFileName}`)
 

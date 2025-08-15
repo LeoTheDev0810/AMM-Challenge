@@ -26,30 +26,73 @@ import type {
 export interface AMMFactoryInterface extends Interface {
   getFunction(
     nameOrSignature:
+      | "ADMIN_ROLE"
+      | "DEFAULT_ADMIN_ROLE"
+      | "FEE_MANAGER_ROLE"
       | "INIT_CODE_PAIR_HASH"
+      | "PAIR_CREATOR_ROLE"
+      | "PAUSER_ROLE"
       | "allPairs"
       | "allPairsLength"
+      | "canCreatePair"
+      | "canManageFees"
+      | "canPause"
       | "createPair"
+      | "emergencyStop"
       | "feeTo"
       | "feeToSetter"
       | "getPair"
+      | "getRoleAdmin"
+      | "grantRole"
+      | "grantRoleBatch"
+      | "hasRole"
       | "initialize"
-      | "owner"
-      | "renounceOwnership"
+      | "pause"
+      | "paused"
+      | "renounceRole"
+      | "revokeRole"
+      | "revokeRoleBatch"
       | "setFeeTo"
       | "setFeeToSetter"
-      | "transferOwnership"
+      | "supportsInterface"
+      | "unpause"
   ): FunctionFragment;
 
   getEvent(
     nameOrSignatureOrTopic:
+      | "FeeToSetterUpdated"
+      | "FeeToUpdated"
       | "Initialized"
-      | "OwnershipTransferred"
       | "PairCreated"
+      | "Paused"
+      | "RoleAdminChanged"
+      | "RoleGranted"
+      | "RoleRevoked"
+      | "Unpaused"
   ): EventFragment;
 
   encodeFunctionData(
+    functionFragment: "ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "FEE_MANAGER_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "INIT_CODE_PAIR_HASH",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "PAIR_CREATOR_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "PAUSER_ROLE",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -61,8 +104,24 @@ export interface AMMFactoryInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "canCreatePair",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "canManageFees",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "canPause",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "createPair",
     values: [AddressLike, AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "emergencyStop",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "feeTo", values?: undefined): string;
   encodeFunctionData(
@@ -74,13 +133,38 @@ export interface AMMFactoryInterface extends Interface {
     values: [AddressLike, AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "initialize",
-    values: [AddressLike]
+    functionFragment: "getRoleAdmin",
+    values: [BytesLike]
   ): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
+    functionFragment: "grantRole",
+    values: [BytesLike, AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "grantRoleBatch",
+    values: [BytesLike, AddressLike[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasRole",
+    values: [BytesLike, AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values: [AddressLike, AddressLike]
+  ): string;
+  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
+  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "renounceRole",
+    values: [BytesLike, AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeRole",
+    values: [BytesLike, AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeRoleBatch",
+    values: [BytesLike, AddressLike[]]
   ): string;
   encodeFunctionData(
     functionFragment: "setFeeTo",
@@ -91,12 +175,30 @@ export interface AMMFactoryInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [AddressLike]
+    functionFragment: "supportsInterface",
+    values: [BytesLike]
   ): string;
+  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
+  decodeFunctionResult(functionFragment: "ADMIN_ROLE", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "FEE_MANAGER_ROLE",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "INIT_CODE_PAIR_HASH",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "PAIR_CREATOR_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "PAUSER_ROLE",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "allPairs", data: BytesLike): Result;
@@ -104,17 +206,46 @@ export interface AMMFactoryInterface extends Interface {
     functionFragment: "allPairsLength",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "canCreatePair",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "canManageFees",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "canPause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "createPair", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "emergencyStop",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "feeTo", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "feeToSetter",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getPair", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "renounceOwnership",
+    functionFragment: "getRoleAdmin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "grantRoleBatch",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceRole",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "revokeRoleBatch",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setFeeTo", data: BytesLike): Result;
@@ -123,16 +254,21 @@ export interface AMMFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "transferOwnership",
+    functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
 }
 
-export namespace InitializedEvent {
-  export type InputTuple = [version: BigNumberish];
-  export type OutputTuple = [version: bigint];
+export namespace FeeToSetterUpdatedEvent {
+  export type InputTuple = [
+    oldFeeToSetter: AddressLike,
+    newFeeToSetter: AddressLike
+  ];
+  export type OutputTuple = [oldFeeToSetter: string, newFeeToSetter: string];
   export interface OutputObject {
-    version: bigint;
+    oldFeeToSetter: string;
+    newFeeToSetter: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -140,12 +276,24 @@ export namespace InitializedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace OwnershipTransferredEvent {
-  export type InputTuple = [previousOwner: AddressLike, newOwner: AddressLike];
-  export type OutputTuple = [previousOwner: string, newOwner: string];
+export namespace FeeToUpdatedEvent {
+  export type InputTuple = [oldFeeTo: AddressLike, newFeeTo: AddressLike];
+  export type OutputTuple = [oldFeeTo: string, newFeeTo: string];
   export interface OutputObject {
-    previousOwner: string;
-    newOwner: string;
+    oldFeeTo: string;
+    newFeeTo: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace InitializedEvent {
+  export type InputTuple = [version: BigNumberish];
+  export type OutputTuple = [version: bigint];
+  export interface OutputObject {
+    version: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -171,6 +319,88 @@ export namespace PairCreatedEvent {
     token1: string;
     pair: string;
     arg3: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace PausedEvent {
+  export type InputTuple = [account: AddressLike];
+  export type OutputTuple = [account: string];
+  export interface OutputObject {
+    account: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace RoleAdminChangedEvent {
+  export type InputTuple = [
+    role: BytesLike,
+    previousAdminRole: BytesLike,
+    newAdminRole: BytesLike
+  ];
+  export type OutputTuple = [
+    role: string,
+    previousAdminRole: string,
+    newAdminRole: string
+  ];
+  export interface OutputObject {
+    role: string;
+    previousAdminRole: string;
+    newAdminRole: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace RoleGrantedEvent {
+  export type InputTuple = [
+    role: BytesLike,
+    account: AddressLike,
+    sender: AddressLike
+  ];
+  export type OutputTuple = [role: string, account: string, sender: string];
+  export interface OutputObject {
+    role: string;
+    account: string;
+    sender: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace RoleRevokedEvent {
+  export type InputTuple = [
+    role: BytesLike,
+    account: AddressLike,
+    sender: AddressLike
+  ];
+  export type OutputTuple = [role: string, account: string, sender: string];
+  export interface OutputObject {
+    role: string;
+    account: string;
+    sender: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace UnpausedEvent {
+  export type InputTuple = [account: AddressLike];
+  export type OutputTuple = [account: string];
+  export interface OutputObject {
+    account: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -221,17 +451,35 @@ export interface AMMFactory extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
+  ADMIN_ROLE: TypedContractMethod<[], [string], "view">;
+
+  DEFAULT_ADMIN_ROLE: TypedContractMethod<[], [string], "view">;
+
+  FEE_MANAGER_ROLE: TypedContractMethod<[], [string], "view">;
+
   INIT_CODE_PAIR_HASH: TypedContractMethod<[], [string], "view">;
+
+  PAIR_CREATOR_ROLE: TypedContractMethod<[], [string], "view">;
+
+  PAUSER_ROLE: TypedContractMethod<[], [string], "view">;
 
   allPairs: TypedContractMethod<[arg0: BigNumberish], [string], "view">;
 
   allPairsLength: TypedContractMethod<[], [bigint], "view">;
+
+  canCreatePair: TypedContractMethod<[account: AddressLike], [boolean], "view">;
+
+  canManageFees: TypedContractMethod<[account: AddressLike], [boolean], "view">;
+
+  canPause: TypedContractMethod<[account: AddressLike], [boolean], "view">;
 
   createPair: TypedContractMethod<
     [tokenA: AddressLike, tokenB: AddressLike],
     [string],
     "nonpayable"
   >;
+
+  emergencyStop: TypedContractMethod<[], [void], "nonpayable">;
 
   feeTo: TypedContractMethod<[], [string], "view">;
 
@@ -243,15 +491,53 @@ export interface AMMFactory extends BaseContract {
     "view"
   >;
 
-  initialize: TypedContractMethod<
-    [_feeToSetter: AddressLike],
+  getRoleAdmin: TypedContractMethod<[role: BytesLike], [string], "view">;
+
+  grantRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
     [void],
     "nonpayable"
   >;
 
-  owner: TypedContractMethod<[], [string], "view">;
+  grantRoleBatch: TypedContractMethod<
+    [role: BytesLike, accounts: AddressLike[]],
+    [void],
+    "nonpayable"
+  >;
 
-  renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
+  hasRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [boolean],
+    "view"
+  >;
+
+  initialize: TypedContractMethod<
+    [_admin: AddressLike, _feeToSetter: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  pause: TypedContractMethod<[], [void], "nonpayable">;
+
+  paused: TypedContractMethod<[], [boolean], "view">;
+
+  renounceRole: TypedContractMethod<
+    [role: BytesLike, callerConfirmation: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  revokeRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  revokeRoleBatch: TypedContractMethod<
+    [role: BytesLike, accounts: AddressLike[]],
+    [void],
+    "nonpayable"
+  >;
 
   setFeeTo: TypedContractMethod<[_feeTo: AddressLike], [void], "nonpayable">;
 
@@ -261,18 +547,35 @@ export interface AMMFactory extends BaseContract {
     "nonpayable"
   >;
 
-  transferOwnership: TypedContractMethod<
-    [newOwner: AddressLike],
-    [void],
-    "nonpayable"
+  supportsInterface: TypedContractMethod<
+    [interfaceId: BytesLike],
+    [boolean],
+    "view"
   >;
+
+  unpause: TypedContractMethod<[], [void], "nonpayable">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
 
   getFunction(
+    nameOrSignature: "ADMIN_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "DEFAULT_ADMIN_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "FEE_MANAGER_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
     nameOrSignature: "INIT_CODE_PAIR_HASH"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "PAIR_CREATOR_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "PAUSER_ROLE"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "allPairs"
@@ -281,12 +584,24 @@ export interface AMMFactory extends BaseContract {
     nameOrSignature: "allPairsLength"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
+    nameOrSignature: "canCreatePair"
+  ): TypedContractMethod<[account: AddressLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "canManageFees"
+  ): TypedContractMethod<[account: AddressLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "canPause"
+  ): TypedContractMethod<[account: AddressLike], [boolean], "view">;
+  getFunction(
     nameOrSignature: "createPair"
   ): TypedContractMethod<
     [tokenA: AddressLike, tokenB: AddressLike],
     [string],
     "nonpayable"
   >;
+  getFunction(
+    nameOrSignature: "emergencyStop"
+  ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "feeTo"
   ): TypedContractMethod<[], [string], "view">;
@@ -301,14 +616,63 @@ export interface AMMFactory extends BaseContract {
     "view"
   >;
   getFunction(
+    nameOrSignature: "getRoleAdmin"
+  ): TypedContractMethod<[role: BytesLike], [string], "view">;
+  getFunction(
+    nameOrSignature: "grantRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "grantRoleBatch"
+  ): TypedContractMethod<
+    [role: BytesLike, accounts: AddressLike[]],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "hasRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [boolean],
+    "view"
+  >;
+  getFunction(
     nameOrSignature: "initialize"
-  ): TypedContractMethod<[_feeToSetter: AddressLike], [void], "nonpayable">;
+  ): TypedContractMethod<
+    [_admin: AddressLike, _feeToSetter: AddressLike],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
-    nameOrSignature: "owner"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "renounceOwnership"
+    nameOrSignature: "pause"
   ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "paused"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "renounceRole"
+  ): TypedContractMethod<
+    [role: BytesLike, callerConfirmation: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "revokeRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "revokeRoleBatch"
+  ): TypedContractMethod<
+    [role: BytesLike, accounts: AddressLike[]],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "setFeeTo"
   ): TypedContractMethod<[_feeTo: AddressLike], [void], "nonpayable">;
@@ -316,9 +680,26 @@ export interface AMMFactory extends BaseContract {
     nameOrSignature: "setFeeToSetter"
   ): TypedContractMethod<[_feeToSetter: AddressLike], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "transferOwnership"
-  ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
+    nameOrSignature: "supportsInterface"
+  ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "unpause"
+  ): TypedContractMethod<[], [void], "nonpayable">;
 
+  getEvent(
+    key: "FeeToSetterUpdated"
+  ): TypedContractEvent<
+    FeeToSetterUpdatedEvent.InputTuple,
+    FeeToSetterUpdatedEvent.OutputTuple,
+    FeeToSetterUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "FeeToUpdated"
+  ): TypedContractEvent<
+    FeeToUpdatedEvent.InputTuple,
+    FeeToUpdatedEvent.OutputTuple,
+    FeeToUpdatedEvent.OutputObject
+  >;
   getEvent(
     key: "Initialized"
   ): TypedContractEvent<
@@ -327,21 +708,71 @@ export interface AMMFactory extends BaseContract {
     InitializedEvent.OutputObject
   >;
   getEvent(
-    key: "OwnershipTransferred"
-  ): TypedContractEvent<
-    OwnershipTransferredEvent.InputTuple,
-    OwnershipTransferredEvent.OutputTuple,
-    OwnershipTransferredEvent.OutputObject
-  >;
-  getEvent(
     key: "PairCreated"
   ): TypedContractEvent<
     PairCreatedEvent.InputTuple,
     PairCreatedEvent.OutputTuple,
     PairCreatedEvent.OutputObject
   >;
+  getEvent(
+    key: "Paused"
+  ): TypedContractEvent<
+    PausedEvent.InputTuple,
+    PausedEvent.OutputTuple,
+    PausedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoleAdminChanged"
+  ): TypedContractEvent<
+    RoleAdminChangedEvent.InputTuple,
+    RoleAdminChangedEvent.OutputTuple,
+    RoleAdminChangedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoleGranted"
+  ): TypedContractEvent<
+    RoleGrantedEvent.InputTuple,
+    RoleGrantedEvent.OutputTuple,
+    RoleGrantedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoleRevoked"
+  ): TypedContractEvent<
+    RoleRevokedEvent.InputTuple,
+    RoleRevokedEvent.OutputTuple,
+    RoleRevokedEvent.OutputObject
+  >;
+  getEvent(
+    key: "Unpaused"
+  ): TypedContractEvent<
+    UnpausedEvent.InputTuple,
+    UnpausedEvent.OutputTuple,
+    UnpausedEvent.OutputObject
+  >;
 
   filters: {
+    "FeeToSetterUpdated(address,address)": TypedContractEvent<
+      FeeToSetterUpdatedEvent.InputTuple,
+      FeeToSetterUpdatedEvent.OutputTuple,
+      FeeToSetterUpdatedEvent.OutputObject
+    >;
+    FeeToSetterUpdated: TypedContractEvent<
+      FeeToSetterUpdatedEvent.InputTuple,
+      FeeToSetterUpdatedEvent.OutputTuple,
+      FeeToSetterUpdatedEvent.OutputObject
+    >;
+
+    "FeeToUpdated(address,address)": TypedContractEvent<
+      FeeToUpdatedEvent.InputTuple,
+      FeeToUpdatedEvent.OutputTuple,
+      FeeToUpdatedEvent.OutputObject
+    >;
+    FeeToUpdated: TypedContractEvent<
+      FeeToUpdatedEvent.InputTuple,
+      FeeToUpdatedEvent.OutputTuple,
+      FeeToUpdatedEvent.OutputObject
+    >;
+
     "Initialized(uint64)": TypedContractEvent<
       InitializedEvent.InputTuple,
       InitializedEvent.OutputTuple,
@@ -353,17 +784,6 @@ export interface AMMFactory extends BaseContract {
       InitializedEvent.OutputObject
     >;
 
-    "OwnershipTransferred(address,address)": TypedContractEvent<
-      OwnershipTransferredEvent.InputTuple,
-      OwnershipTransferredEvent.OutputTuple,
-      OwnershipTransferredEvent.OutputObject
-    >;
-    OwnershipTransferred: TypedContractEvent<
-      OwnershipTransferredEvent.InputTuple,
-      OwnershipTransferredEvent.OutputTuple,
-      OwnershipTransferredEvent.OutputObject
-    >;
-
     "PairCreated(address,address,address,uint256)": TypedContractEvent<
       PairCreatedEvent.InputTuple,
       PairCreatedEvent.OutputTuple,
@@ -373,6 +793,61 @@ export interface AMMFactory extends BaseContract {
       PairCreatedEvent.InputTuple,
       PairCreatedEvent.OutputTuple,
       PairCreatedEvent.OutputObject
+    >;
+
+    "Paused(address)": TypedContractEvent<
+      PausedEvent.InputTuple,
+      PausedEvent.OutputTuple,
+      PausedEvent.OutputObject
+    >;
+    Paused: TypedContractEvent<
+      PausedEvent.InputTuple,
+      PausedEvent.OutputTuple,
+      PausedEvent.OutputObject
+    >;
+
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": TypedContractEvent<
+      RoleAdminChangedEvent.InputTuple,
+      RoleAdminChangedEvent.OutputTuple,
+      RoleAdminChangedEvent.OutputObject
+    >;
+    RoleAdminChanged: TypedContractEvent<
+      RoleAdminChangedEvent.InputTuple,
+      RoleAdminChangedEvent.OutputTuple,
+      RoleAdminChangedEvent.OutputObject
+    >;
+
+    "RoleGranted(bytes32,address,address)": TypedContractEvent<
+      RoleGrantedEvent.InputTuple,
+      RoleGrantedEvent.OutputTuple,
+      RoleGrantedEvent.OutputObject
+    >;
+    RoleGranted: TypedContractEvent<
+      RoleGrantedEvent.InputTuple,
+      RoleGrantedEvent.OutputTuple,
+      RoleGrantedEvent.OutputObject
+    >;
+
+    "RoleRevoked(bytes32,address,address)": TypedContractEvent<
+      RoleRevokedEvent.InputTuple,
+      RoleRevokedEvent.OutputTuple,
+      RoleRevokedEvent.OutputObject
+    >;
+    RoleRevoked: TypedContractEvent<
+      RoleRevokedEvent.InputTuple,
+      RoleRevokedEvent.OutputTuple,
+      RoleRevokedEvent.OutputObject
+    >;
+
+    "Unpaused(address)": TypedContractEvent<
+      UnpausedEvent.InputTuple,
+      UnpausedEvent.OutputTuple,
+      UnpausedEvent.OutputObject
+    >;
+    Unpaused: TypedContractEvent<
+      UnpausedEvent.InputTuple,
+      UnpausedEvent.OutputTuple,
+      UnpausedEvent.OutputObject
     >;
   };
 }

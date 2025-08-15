@@ -4,18 +4,26 @@ pragma solidity ^0.8.5;
 import "./interfaces/IAMMFactory.sol";
 import "./AMMTokenPair.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
 
-//AMM工厂 - 可升级版本
+//AMM工厂 - 可升级版本 with RBAC
 contract AMMFactory is
     IAMMFactory,
     Initializable,
-    OwnableUpgradeable,
-    ReentrancyGuardUpgradeable
+    AccessControlUpgradeable,
+    ReentrancyGuardUpgradeable,
+    PausableUpgradeable
 {
+    // 角色定义
+    bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
+    bytes32 public constant PAIR_CREATOR_ROLE = keccak256("PAIR_CREATOR_ROLE");
+    bytes32 public constant FEE_MANAGER_ROLE = keccak256("FEE_MANAGER_ROLE");
+    bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+
     address public feeTo; //收税地址
-    address public feeToSetter; //收税权限控制地址
+    address public feeToSetter; //收税权限控制地址（为了保持接口兼容性）
     //配对映射,地址=>(地址=>地址)
     mapping(address => mapping(address => address)) public getPair;
     //所有配对数组
@@ -31,12 +39,27 @@ contract AMMFactory is
 
     /**
      * @dev 初始化函数，替代构造函数
-     * @param _feeToSetter 收税权限控制地址
+     * @param _admin 管理员地址
+     * @param _feeToSetter 收税权限控制地址（为了保持兼容性）
      */
-    function initialize(address _feeToSetter) external initializer {
-        __Ownable_init(msg.sender);
+    function initialize(
+        address _admin,
+        address _feeToSetter
+    ) external initializer {
+        __AccessControl_init();
         __ReentrancyGuard_init();
+        __Pausable_init();
+
+        // 设置角色管理员
+        _grantRole(DEFAULT_ADMIN_ROLE, _admin);
+        _grantRole(ADMIN_ROLE, _admin);
+        _grantRole(PAIR_CREATOR_ROLE, _admin);
+        _grantRole(FEE_MANAGER_ROLE, _admin);
+        _grantRole(PAUSER_ROLE, _admin);
+
+        // 为了保持接口兼容性
         feeToSetter = _feeToSetter;
+        _grantRole(FEE_MANAGER_ROLE, _feeToSetter);
     }
 
     /**
@@ -47,16 +70,21 @@ contract AMMFactory is
     }
 
     /**
-     *
      * @param tokenA TokenA
      * @param tokenB TokenB
      * @return pair 配对地址
-     * @dev 创建配对
+     * @dev 创建配对 - 需要 PAIR_CREATOR_ROLE 角色
      */
     function createPair(
         address tokenA,
         address tokenB
-    ) external nonReentrant returns (address pair) {
+    )
+        external
+        nonReentrant
+        whenNotPaused
+        onlyRole(PAIR_CREATOR_ROLE)
+        returns (address pair)
+    {
         //确认tokenA不等于tokenB
         require(tokenA != tokenB, "AMMFactory: IDENTICAL_ADDRESSES");
         //将tokenA和tokenB进行大小排序,确保tokenA小于tokenB
@@ -92,20 +120,111 @@ contract AMMFactory is
     }
 
     /**
-     * @dev 设置收税地址
+     * @dev 设置收税地址 - 需要 FEE_MANAGER_ROLE 角色
      * @param _feeTo 收税地址
      */
-    function setFeeTo(address _feeTo) external {
-        require(msg.sender == feeToSetter, "AMMFactory: FORBIDDEN");
+    function setFeeTo(address _feeTo) external onlyRole(FEE_MANAGER_ROLE) {
+        address oldFeeTo = feeTo;
         feeTo = _feeTo;
+        emit FeeToUpdated(oldFeeTo, _feeTo);
     }
 
     /**
-     * @dev 收税权限控制
+     * @dev 收税权限控制 - 需要 ADMIN_ROLE 角色
      * @param _feeToSetter 收税权限控制
      */
-    function setFeeToSetter(address _feeToSetter) external {
-        require(msg.sender == feeToSetter, "AMMFactory: FORBIDDEN");
+    function setFeeToSetter(
+        address _feeToSetter
+    ) external onlyRole(ADMIN_ROLE) {
+        address oldFeeToSetter = feeToSetter;
+
+        // 移除旧地址的 FEE_MANAGER_ROLE
+        if (oldFeeToSetter != address(0)) {
+            _revokeRole(FEE_MANAGER_ROLE, oldFeeToSetter);
+        }
+
+        // 给新地址授予 FEE_MANAGER_ROLE
+        if (_feeToSetter != address(0)) {
+            _grantRole(FEE_MANAGER_ROLE, _feeToSetter);
+        }
+
         feeToSetter = _feeToSetter;
+        emit FeeToSetterUpdated(oldFeeToSetter, _feeToSetter);
+    }
+
+    /**
+     * @dev 暂停合约 - 需要 PAUSER_ROLE 角色
+     */
+    function pause() external onlyRole(PAUSER_ROLE) {
+        _pause();
+    }
+
+    /**
+     * @dev 恢复合约 - 需要 PAUSER_ROLE 角色
+     */
+    function unpause() external onlyRole(PAUSER_ROLE) {
+        _unpause();
+    }
+
+    /**
+     * @dev 批量授予角色 - 需要 ADMIN_ROLE 角色
+     * @param role 角色
+     * @param accounts 账户数组
+     */
+    function grantRoleBatch(
+        bytes32 role,
+        address[] calldata accounts
+    ) external onlyRole(ADMIN_ROLE) {
+        for (uint256 i = 0; i < accounts.length; i++) {
+            _grantRole(role, accounts[i]);
+        }
+    }
+
+    /**
+     * @dev 批量撤销角色 - 需要 ADMIN_ROLE 角色
+     * @param role 角色
+     * @param accounts 账户数组
+     */
+    function revokeRoleBatch(
+        bytes32 role,
+        address[] calldata accounts
+    ) external onlyRole(ADMIN_ROLE) {
+        for (uint256 i = 0; i < accounts.length; i++) {
+            _revokeRole(role, accounts[i]);
+        }
+    }
+
+    /**
+     * @dev 检查地址是否有创建配对的权限
+     * @param account 要检查的地址
+     * @return 是否有权限
+     */
+    function canCreatePair(address account) external view returns (bool) {
+        return hasRole(PAIR_CREATOR_ROLE, account);
+    }
+
+    /**
+     * @dev 检查地址是否有管理费用的权限
+     * @param account 要检查的地址
+     * @return 是否有权限
+     */
+    function canManageFees(address account) external view returns (bool) {
+        return hasRole(FEE_MANAGER_ROLE, account);
+    }
+
+    /**
+     * @dev 检查地址是否有暂停权限
+     * @param account 要检查的地址
+     * @return 是否有权限
+     */
+    function canPause(address account) external view returns (bool) {
+        return hasRole(PAUSER_ROLE, account);
+    }
+
+    /**
+     * @dev 紧急停止所有操作 - 需要 DEFAULT_ADMIN_ROLE
+     */
+    function emergencyStop() external onlyRole(DEFAULT_ADMIN_ROLE) {
+        _pause();
     }
 }
